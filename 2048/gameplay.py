@@ -31,7 +31,7 @@ class Gameplay():
                 this_row = self.grid[:, i] # u hoăc d thì lấy cột
 
             flipped = False
-            if key in 'rd': #nếu là r hoặc d thì lật ngược list
+            if key in 'rd': #nếu là r hoặc d thì lật ngược list để có thể tận dụng hàm get num
                 flipped = True
                 this_row = this_row[::-1]
 
