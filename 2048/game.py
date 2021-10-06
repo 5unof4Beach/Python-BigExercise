@@ -16,17 +16,29 @@ class Game:
         pygame.display.set_caption("2048")
 
     def run(self):
+        not_end = True
         while True:
             self._check_events()
+            if(self._victory_check()):
+                if not_end:
+                    self._update_screen()
+                    not_end = False
+                self._print_victory_message()
+                # pygame.display.flip()
+                continue
+            if(self._gameover_check()):
+                if not_end:
+                    self._update_screen()
+                    not_end = False
+                self._print_gameover_message()
+                continue
             self._update_screen()
 
     def _update_screen(self):
-        while True:
-            self._check_events()
-            self.screen.fill(self.settings.bg_color)
-            self._update_grid()
-            self._victory_check()
-            pygame.display.flip()
+        self._check_events()
+        self.screen.fill(self.settings.bg_color)
+        self._update_grid()
+        pygame.display.flip()
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -67,14 +79,18 @@ class Game:
         for i in range(self.settings.grid_size):
             for j in range(self.settings.grid_size):
                 temp = matrix[i][j]
-                rect_height = height // self.settings.grid_size - 2 * space
-                rect_width = width // self.settings.grid_size - 2 * space
+                rect_height = (height - 2 * space)// self.settings.grid_size
+                rect_width = (height - 2 * space)// self.settings.grid_size
 
-                x = j * rect_width + space
-                y = i * rect_height + space
+                x = j * (rect_width + space)
+                y = i * (rect_height + space)
+
+                #vẽ hình vuống có màu tương ứng với số
                 pygame.draw.rect(screen,
                                  self.settings.number_color.get(temp),
                                  pygame.Rect(x,y,rect_width,rect_height))
+
+                #in số ở ô vuông tương ứng
                 self.draw_number(temp,matrix,x,y,rect_width,rect_height)
 
     def draw_number(self,temp,matrix,x,y,rect_width,rect_height):
@@ -85,9 +101,27 @@ class Game:
 
     def _victory_check(self):
         if self.gameplay.grid.__contains__(self.settings._victory_point):
-            tempFont = pygame.font.SysFont('clear sans',80,bold=True)
-            message = tempFont.render("YOU WIN",True,(10,10,10))
-            messageRect = message.get_rect()
-            messageRect.center = (self.settings.screen_width//2,self.settings.screen_width//2)
-            self.screen.blit(message,messageRect)
+            return True
+        return False
 
+    def _print_victory_message(self):
+        tempFont = pygame.font.SysFont('clear sans', 80, bold=True)
+        message = tempFont.render("YOU WIN!!!", True, (10, 10, 10))
+        messageRect = message.get_rect()
+        messageRect.center = (self.settings.screen_width // 2, self.settings.screen_width // 2)
+        self.screen.blit(message, messageRect)
+        pygame.display.flip()
+
+    def _gameover_check(self):
+        for i in self.gameplay.grid.flatten():
+            if i == 0:
+                return False
+        return True
+
+    def _print_gameover_message(self):
+        tempFont = pygame.font.SysFont('clear sans', 60, bold=True)
+        message = tempFont.render("OUT OF MOVES, GAME OVER !!!", True, (10, 10, 10))
+        messageRect = message.get_rect()
+        messageRect.center = (self.settings.screen_width // 2, self.settings.screen_width // 2)
+        self.screen.blit(message, messageRect)
+        pygame.display.flip()
