@@ -26,4 +26,4 @@ class Settings:
                             [128,256,0,0],
                             [0,0,0,0]
                             ]
-        self._victory_point = 4
+        self._victory_point = 2048

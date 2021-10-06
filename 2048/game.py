@@ -25,12 +25,12 @@ class Game:
             self._check_events()
             self.screen.fill(self.settings.bg_color)
             self._update_grid()
-            self._vitory_check()
+            self._victory_check()
             pygame.display.flip()
 
     def _check_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.quit():
+            if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_key_down_event(event)
@@ -67,10 +67,11 @@ class Game:
         for i in range(self.settings.grid_size):
             for j in range(self.settings.grid_size):
                 temp = matrix[i][j]
-                x = j * width // self.settings.grid_size + space
-                y = i * height // self.settings.grid_size + space
                 rect_height = height // self.settings.grid_size - 2 * space
                 rect_width = width // self.settings.grid_size - 2 * space
+
+                x = j * rect_width + space
+                y = i * rect_height + space
                 pygame.draw.rect(screen,
                                  self.settings.number_color.get(temp),
                                  pygame.Rect(x,y,rect_width,rect_height))
@@ -82,7 +83,7 @@ class Game:
         numberRect.center = (x + rect_height//2,y + rect_width//2)
         self.screen.blit(number,numberRect)
 
-    def _vitory_check(self):
+    def _victory_check(self):
         if self.gameplay.grid.__contains__(self.settings._victory_point):
             tempFont = pygame.font.SysFont('clear sans',80,bold=True)
             message = tempFont.render("YOU WIN",True,(10,10,10))

@@ -61,10 +61,6 @@ class Gameplay():
                 continue
             self.next_number()
 
-#hàm kiểm tra sau khi bấm nút có thay đổi j ko
-    def isTheSame(self,previous_grid):
-        if (all((self.grid.flatten() == previous_grid.flatten()))):
-            return True
 
     @staticmethod
     def _get_num(row):
@@ -85,6 +81,12 @@ class Gameplay():
 
     def __str__(self):
         return str(self.grid)
+
+    # hàm kiểm tra sau khi bấm nút có thay đổi j ko
+    def isTheSame(self, previous_grid):
+        if (all((self.grid.flatten() == previous_grid.flatten()))):
+            return True
+
     # @staticmethod
     def getGrid(self):
         return self.grid.copy()
