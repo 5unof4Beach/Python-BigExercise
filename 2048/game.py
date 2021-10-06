@@ -19,14 +19,14 @@ class Game:
         not_end = True
         while True:
             self._check_events()
-            if(self._victory_check()):
+            if self._victory_check():
                 if not_end:
                     self._update_screen()
                     not_end = False
                 self._print_victory_message()
                 # pygame.display.flip()
                 continue
-            if(self._gameover_check()):
+            if self._gameover_check():
                 if not_end:
                     self._update_screen()
                     not_end = False
@@ -53,16 +53,19 @@ class Game:
             self.gameplay.move_event(key='r')
             if not self.gameplay.isTheSame(before_pressed_grid):
                 self.gameplay.next_number()
+
         elif event.key == pygame.K_LEFT:
             before_pressed_grid = self.gameplay.getGrid()
             self.gameplay.move_event(key='l')
             if not self.gameplay.isTheSame(before_pressed_grid):
                 self.gameplay.next_number()
+
         elif event.key == pygame.K_UP:
             before_pressed_grid = self.gameplay.getGrid()
             self.gameplay.move_event(key='u')
             if not self.gameplay.isTheSame(before_pressed_grid):
                 self.gameplay.next_number()
+
         elif event.key == pygame.K_DOWN:
             before_pressed_grid = self.gameplay.getGrid()
             self.gameplay.move_event(key='d')
@@ -94,11 +97,14 @@ class Game:
                 self.draw_number(temp,matrix,x,y,rect_width,rect_height)
 
     def draw_number(self,temp,matrix,x,y,rect_width,rect_height):
+        if temp == 0:
+            temp = ''
         number = self.myfont.render(str(temp),True,(10,10,10))
         numberRect = number.get_rect()
         numberRect.center = (x + rect_height//2,y + rect_width//2)
         self.screen.blit(number,numberRect)
 
+    # kiểm tra xem đã đạt được số mục tiêu hay chưa
     def _victory_check(self):
         if self.gameplay.grid.__contains__(self.settings._victory_point):
             return True
@@ -111,7 +117,7 @@ class Game:
         messageRect.center = (self.settings.screen_width // 2, self.settings.screen_width // 2)
         self.screen.blit(message, messageRect)
         pygame.display.flip()
-
+    # kiểm tra xem còn ô trống hay không để kết thúc game
     def _gameover_check(self):
         for i in self.gameplay.grid.flatten():
             if i == 0:
