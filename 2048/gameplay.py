@@ -16,9 +16,9 @@ class Gameplay():
         #lấy tất cả các vị trí có gía trị = 0 trong ma trận
         unoccupied_pos = list( zip(*numpy.where(self.grid == 0)))
 
-        # lấy ngẫu nhiên 2 vị trí trong list các vị trí = 0
+        # lấy ngẫu nhiên k vị trí trong list các vị trí = 0 để đặt 2 giá trị 2 hoặc 4
         for pos in random.sample(unoccupied_pos,k):
-            if random.random() < .1 :
+            if random.random() < .1:
                 self.grid[pos] = 4
             else:
                 self.grid[pos] = 2
@@ -61,7 +61,7 @@ class Gameplay():
                 continue
             self.next_number()
 
-
+#hàm lấy tập những số khác 0 trong list và xử lý theo cách chơi của 2048
     @staticmethod
     def _get_num(row):
         this_n = row[row != 0]
@@ -87,7 +87,6 @@ class Gameplay():
         if (all((self.grid.flatten() == previous_grid.flatten()))):
             return True
 
-    # @staticmethod
     def getGrid(self):
         return self.grid.copy()
 

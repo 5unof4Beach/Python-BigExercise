@@ -26,12 +26,12 @@ class Game:
                 self._print_victory_message()
                 # pygame.display.flip()
                 continue
-            if self._gameover_check():
-                if not_end:
-                    self._update_screen()
-                    not_end = False
-                self._print_gameover_message()
-                continue
+            # if self._gameover_check():
+            #     if not_end:
+            #         self._update_screen()
+            #         not_end = False
+            #     self._print_gameover_message()
+            #     continue
             self._update_screen()
 
     def _update_screen(self):
@@ -104,7 +104,7 @@ class Game:
         numberRect.center = (x + rect_height//2,y + rect_width//2)
         self.screen.blit(number,numberRect)
 
-    # kiểm tra xem đã đạt được số mục tiêu hay chưa
+    # kiểm tra xem đã đạt được con số mục tiêu hay chưa
     def _victory_check(self):
         if self.gameplay.grid.__contains__(self.settings._victory_point):
             return True
