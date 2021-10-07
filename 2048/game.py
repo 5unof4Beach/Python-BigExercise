@@ -44,37 +44,40 @@ class Game:
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
         self._update_grid()
-        self._draw_settings_attribute()
+        self._draw_side_screen()
         pygame.display.flip()
 
     def _check_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                self.button_pressed_times += 1
+            if event.type == pygame.KEYDOWN:
                 self._check_key_down_event(event)
 
     def _check_key_down_event(self, event):
-        if event.key == pygame.K_RIGHT:
+        if event.key == pygame.K_q:
+            sys.exit()
+        elif event.key == pygame.K_RIGHT:
+            self.button_pressed_times += 1
             before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='r')
             if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_LEFT:
+            self.button_pressed_times += 1
             before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='l')
             if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_UP:
+            self.button_pressed_times += 1
             before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='u')
             if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_DOWN:
+            self.button_pressed_times += 1
             before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='d')
             if not self.gameplay.is_the_same(before_pressed_grid):
@@ -109,7 +112,6 @@ class Game:
                 # in số ở ô vuông tương ứng
                 self.draw_number(temp, x, y, rect_width, rect_height)
 
-
     def draw_number(self, temp, x, y, rect_width, rect_height):
         if temp == 0:
             temp = ''
@@ -132,8 +134,7 @@ class Game:
         self.screen.blit(message, message_rect)
         pygame.display.flip()
 
-    # kiểm tra xem còn ô trống hay không để kết thúc game
-
+    # kiểm tra xem còn điều kiện kết thúc game
     def _gameover_check(self):
         for i in range(self.settings.grid_size):
             row = self.gameplay.grid[i, :]
@@ -154,9 +155,10 @@ class Game:
         self.screen.blit(message, message_rect)
         pygame.display.flip()
 
-    def _draw_settings_attribute(self):
-        self.print_message("Destination: " + str(self.settings.get_victory_point()),self.settings.screen_width - 200, 50)
-        self.print_message("Button pressed: " + str(self.button_pressed_times) + " times",self.settings.screen_width - 200, 100)
+    def _draw_side_screen(self):
+        self.print_message("Destination: " + str(self.settings.get_victory_point()), self.settings.screen_width - 200, 50)
+        self.print_message("Button pressed: " + str(self.button_pressed_times) + " times", self.settings.screen_width - 200, 100)
+        self.print_message("q: Exit Game", self.settings.screen_width - 200, self.settings.screen_height - 50)
 
     def print_message(self, message, x, y):
         temp_font = pygame.font.SysFont('clear sans', 40, bold=False)
