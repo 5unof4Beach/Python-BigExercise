@@ -21,7 +21,7 @@ class Game:
         self.settingscreen.show_screen()
         self.gameplay.settings = self.settingscreen.settings
         self.gameplay._init_grid()
-        print(self.gameplay.getGrid())
+        # print(self.gameplay.getGrid())
         self.gameplay.next_number()
         not_end = True
         while True:
@@ -87,11 +87,11 @@ class Game:
         for i in range(self.settings.grid_size):
             for j in range(self.settings.grid_size):
                 temp = matrix[i][j]
-                rect_height = (height - 2 * space)// self.settings.grid_size
-                rect_width = (height - 2 * space)// self.settings.grid_size
+                rect_height = (height - (self.settings.grid_size + 1) * space ) // self.settings.grid_size
+                rect_width = (width - (self.settings.grid_size + 1) * space ) // self.settings.grid_size
 
-                x = j * (rect_width + space)
-                y = i * (rect_height + space)
+                x = j * (rect_width + space) + space
+                y = i * (rect_height + space) + space
 
                 #vẽ hình vuống có màu tương ứng với số
                 pygame.draw.rect(screen,
