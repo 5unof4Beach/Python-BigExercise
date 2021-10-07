@@ -1,7 +1,7 @@
 
 class Settings:
     def __init__(self):
-        self.screen_width = 800
+        self.screen_width = 1200
         self.screen_height = 800
         self.bg_color = (187, 173, 160)
 
@@ -22,3 +22,7 @@ class Settings:
                              4096: (255, 59, 62)}
 
         self._victory_point = 2048
+
+    # @staticmethod
+    def get_victory_point(self):
+        return self._victory_point

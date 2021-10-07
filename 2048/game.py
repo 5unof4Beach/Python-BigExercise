@@ -12,15 +12,16 @@ class Game:
         self.myfont = pygame.font.SysFont('clear sans', 50, bold=True)
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width,
-                                               self.settings.screen_width))
+                                               self.settings.screen_height))
         self.settingscreen = SettingScreen(self)
         self.gameplay = Gameplay()
+        self.button_pressed_times = 0
         pygame.display.set_caption("2048")
 
     def run(self):
         self.settingscreen.show_screen()
         self.gameplay.settings = self.settingscreen.settings
-        self.gameplay._init_grid()
+        self.gameplay.init_grid()
         # print(self.gameplay.getGrid())
         self.gameplay.next_number()
         not_end = True
@@ -43,6 +44,7 @@ class Game:
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
         self._update_grid()
+        self._draw_settings_attribute()
         pygame.display.flip()
 
     def _check_events(self):
@@ -50,96 +52,115 @@ class Game:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
+                self.button_pressed_times += 1
                 self._check_key_down_event(event)
 
     def _check_key_down_event(self, event):
         if event.key == pygame.K_RIGHT:
-            before_pressed_grid = self.gameplay.getGrid()
+            before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='r')
-            if not self.gameplay.isTheSame(before_pressed_grid):
+            if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_LEFT:
-            before_pressed_grid = self.gameplay.getGrid()
+            before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='l')
-            if not self.gameplay.isTheSame(before_pressed_grid):
+            if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_UP:
-            before_pressed_grid = self.gameplay.getGrid()
+            before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='u')
-            if not self.gameplay.isTheSame(before_pressed_grid):
+            if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_DOWN:
-            before_pressed_grid = self.gameplay.getGrid()
+            before_pressed_grid = self.gameplay.get_grid()
             self.gameplay.move_event(key='d')
-            if not self.gameplay.isTheSame(before_pressed_grid):
+            if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
 
     def _update_grid(self):
-        self.draw_grid(self.screen,self.gameplay.getGrid(),self.myfont)
+        self.draw_grid(self.screen, self.gameplay.get_grid())
 
-    def draw_grid(self, screen,matrix, font):
+    def draw_grid(self, screen, matrix):
         space = 10
-        width = self.settings.screen_width
+        radius = 10
+        width = self.settings.screen_height
         height = width
         for i in range(self.settings.grid_size):
             for j in range(self.settings.grid_size):
                 temp = matrix[i][j]
-                rect_height = (height - (self.settings.grid_size + 1) * space ) // self.settings.grid_size
-                rect_width = (width - (self.settings.grid_size + 1) * space ) // self.settings.grid_size
+                rect_height = (height - (self.settings.grid_size + 1) * space) / self.settings.grid_size
+                rect_width = (width - (self.settings.grid_size + 1) * space) / self.settings.grid_size
 
                 x = j * (rect_width + space) + space
                 y = i * (rect_height + space) + space
 
-                #vẽ hình vuống có màu tương ứng với số
+                # vẽ hình vuống có màu tương ứng với số
                 pygame.draw.rect(screen,
                                  self.settings.number_color.get(temp),
-                                 pygame.Rect(x,y,rect_width,rect_height))
+                                 pygame.Rect(x, y, rect_width, rect_height), False, radius)
 
-                #in số ở ô vuông tương ứng
-                self.draw_number(temp,matrix,x,y,rect_width,rect_height)
+                # thêm viền cho ô vuống
+                pygame.draw.rect(screen,
+                                 (10, 10, 10),
+                                 pygame.Rect(x, y, rect_width, rect_height), True, radius)
+                # in số ở ô vuông tương ứng
+                self.draw_number(temp, x, y, rect_width, rect_height)
 
-    def draw_number(self, temp, matrix, x, y, rect_width, rect_height):
+
+    def draw_number(self, temp, x, y, rect_width, rect_height):
         if temp == 0:
             temp = ''
-        number = self.myfont.render(str(temp),True,(10,10,10))
-        numberRect = number.get_rect()
-        numberRect.center = (x + rect_height//2,y + rect_width//2)
-        self.screen.blit(number,numberRect)
+        number = self.myfont.render(str(temp), True, (10, 10, 10))
+        number_rect = number.get_rect()
+        number_rect.center = (x + rect_height // 2, y + rect_width // 2)
+        self.screen.blit(number, number_rect)
 
     # kiểm tra xem đã đạt được con số mục tiêu hay chưa
     def _victory_check(self):
-        if self.gameplay.grid.__contains__(self.settings._victory_point):
+        if self.gameplay.grid.__contains__(self.settings.get_victory_point()):
             return True
         return False
 
     def _print_victory_message(self):
-        tempFont = pygame.font.SysFont('clear sans', 80, bold=True)
-        message = tempFont.render("YOU WIN!!!", True, (10, 10, 10))
-        messageRect = message.get_rect()
-        messageRect.center = (self.settings.screen_width // 2, self.settings.screen_width // 2)
-        self.screen.blit(message, messageRect)
+        temp_font = pygame.font.SysFont('clear sans', 80, bold=True)
+        message = temp_font.render("YOU WIN!!!", True, (10, 10, 10))
+        message_rect = message.get_rect()
+        message_rect.center = (self.settings.screen_height // 2, self.settings.screen_height // 2)
+        self.screen.blit(message, message_rect)
         pygame.display.flip()
+
     # kiểm tra xem còn ô trống hay không để kết thúc game
 
     def _gameover_check(self):
         for i in range(self.settings.grid_size):
             row = self.gameplay.grid[i, :]
             col = self.gameplay.grid[:, i]
-            for j in range(len(row)-1):
-                if row[j] == row[j+1] or row[j] == 0 or row[j+1] == 0:
+            for j in range(len(row) - 1):
+                if row[j] == row[j + 1] or row[j] == 0 or row[j + 1] == 0:
                     return False
-            for j in range(len(col)-1):
-                if col[j] == col[j+1] or col[j] == 0 or col[j+1] == 0:
+            for j in range(len(col) - 1):
+                if col[j] == col[j + 1] or col[j] == 0 or col[j + 1] == 0:
                     return False
         return True
 
     def _print_gameover_message(self):
-        tempFont = pygame.font.SysFont('clear sans', 60, bold=False)
-        message = tempFont.render("OUT OF MOVES, GAME OVER !!!", True, (10, 10, 10))
-        messageRect = message.get_rect()
-        messageRect.center = (self.settings.screen_width // 2, self.settings.screen_width // 2)
-        self.screen.blit(message, messageRect)
+        temp_font = pygame.font.SysFont('clear sans', 60, bold=False)
+        message = temp_font.render("OUT OF MOVES, GAME OVER !!!", True, (10, 10, 10))
+        message_rect = message.get_rect()
+        message_rect.center = (self.settings.screen_height // 2, self.settings.screen_height // 2)
+        self.screen.blit(message, message_rect)
         pygame.display.flip()
+
+    def _draw_settings_attribute(self):
+        self.print_message("Destination: " + str(self.settings.get_victory_point()),self.settings.screen_width - 200, 50)
+        self.print_message("Button pressed: " + str(self.button_pressed_times) + " times",self.settings.screen_width - 200, 100)
+
+    def print_message(self, message, x, y):
+        temp_font = pygame.font.SysFont('clear sans', 40, bold=False)
+        message = temp_font.render(str(message), True, (10, 10, 10))
+        message_rect = message.get_rect()
+        message_rect.center = (x, y)
+        self.screen.blit(message, message_rect)

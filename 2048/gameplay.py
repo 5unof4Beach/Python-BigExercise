@@ -3,42 +3,44 @@ import random
 from settings import Settings
 
 
-class Gameplay():
+class Gameplay:
     def __init__(self):
         self.settings = Settings()
+        self.grid = [[]]
 
-    def _init_grid(self):
+    def init_grid(self):
         self.grid = numpy.zeros((self.settings.grid_size,
                                  self.settings.grid_size),
                                 dtype=int)
 
     def next_number(self, k=1):
-        #lấy tất cả các vị trí có gía trị = 0 trong ma trận
+        # lấy tất cả các vị trí có gía trị = 0 trong ma trận
         unoccupied_pos = list(zip(*numpy.where(self.grid == 0)))
 
         # lấy ngẫu nhiên k vị trí trong list các vị trí = 0 để đặt 2 giá trị 2 hoặc 4
         for pos in random.sample(unoccupied_pos, k):
-            if random.random() < .1:
+            rand = random.randint(0, 1)
+            if rand == 0:
                 self.grid[pos] = 4
             else:
                 self.grid[pos] = 2
 
     def move_event(self, key):
         for i in range(self.settings.grid_size):
-            if key in 'lr': # nếu nhập vào là l hoặc r thì lấy hàng
-                this_row = self.grid[i,:]
-            else:
-                this_row = self.grid[:, i] # u hoăc d thì lấy cột
-
             flipped = False
-            if key in 'rd': #nếu là r hoặc d thì lật ngược list để có thể tận dụng hàm get num
+            if key in 'lr':  # nếu nhập vào là l hoặc r thì lấy hàng
+                this_row = self.grid[i, :]
+            else:
+                this_row = self.grid[:, i]  # u hoăc d thì lấy cột
+
+            if key in 'rd':  # nếu là r hoặc d thì lật ngược list để có thể tận dụng hàm get num
                 flipped = True
                 this_row = this_row[::-1]
 
-            this_n = self._get_num(this_row) # list những số != 0 trong hàng
+            this_n = self._get_num(this_row)  # list những số != 0 trong hàng
             # print(this_n)
-            new_this_row = numpy.zeros_like(this_row) # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
-            new_this_row[:len(this_n)] = this_n # gắn các giá trị != 0 vào mảng mới
+            new_this_row = numpy.zeros_like(this_row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
+            new_this_row[:len(this_n)] = this_n  # gắn các giá trị != 0 vào mảng mới
 
             if flipped:
                 new_this_row = new_this_row[::-1]
@@ -48,20 +50,7 @@ class Gameplay():
             else:
                 self.grid[:, i] = new_this_row
 
-    def run(self, key):
-        self.next_number(k = 2)
-        while True:
-            print(self.grid)
-            key = input()
-            if key == 'q':
-                break
-            previous_grid = self.grid.copy()
-            self.move_event(key)
-            if( all( (self.grid.flatten() == previous_grid.flatten()) )):
-                continue
-            self.next_number()
-
-    #phương thức lấy tập những số khác 0 trong list và xử lý theo cách chơi của 2048
+    # phương thức lấy tập những số khác 0 trong list và xử lý theo cách chơi của 2048
     @staticmethod
     def _get_num(row):
         this_n = row[row != 0]
@@ -71,7 +60,8 @@ class Gameplay():
             if skip:
                 skip = False
                 continue
-            if i != len(this_n) - 1 and this_n[i] == this_n[i+1]: #nếu 2 số liền nhau mà giống nhau thì cộng lại và cho vào mảng mới
+            if i != len(this_n) - 1 and this_n[i] == this_n[
+                i + 1]:  # nếu 2 số liền nhau mà giống nhau thì cộng lại và cho vào mảng mới
                 sum = this_n[i] * 2
                 res.append(sum)
                 skip = True
@@ -83,14 +73,9 @@ class Gameplay():
         return str(self.grid)
 
     # hàm kiểm tra sau khi bấm nút có thay đổi j ko
-    def isTheSame(self, previous_grid):
-        if (all((self.grid.flatten() == previous_grid.flatten()))):
+    def is_the_same(self, previous_grid):
+        if all((self.grid.flatten() == previous_grid.flatten())):
             return True
 
-    def getGrid(self):
+    def get_grid(self):
         return self.grid.copy()
-
-# test = Gameplay()
-# test.next_number(k = 2)
-# test.run()
-
