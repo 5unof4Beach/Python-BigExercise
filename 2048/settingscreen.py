@@ -37,16 +37,22 @@ class SettingScreen:
                         return True
                     elif self.option_button[0].collidepoint(cursor_pos):
                         self.settings._victory_point = 16
+                        self._draw_button_reaction(self.option_button[0])
                     elif self.option_button[1].collidepoint(cursor_pos):
                         self.settings._victory_point = 2048
+                        self._draw_button_reaction(self.option_button[1])
                     elif self.option_button[2].collidepoint(cursor_pos):
                         self.settings._victory_point = 4096
+                        self._draw_button_reaction(self.option_button[2])
                     elif self.option_button[3].collidepoint(cursor_pos):
                         self.settings.grid_size = 2
+                        self._draw_button_reaction(self.option_button[3])
                     elif self.option_button[4].collidepoint(cursor_pos):
                         self.settings.grid_size = 4
+                        self._draw_button_reaction(self.option_button[4])
                     elif self.option_button[5].collidepoint(cursor_pos):
                         self.settings.grid_size = 8
+                        self._draw_button_reaction(self.option_button[5])
 
 
     def _show_option(self):
@@ -68,7 +74,6 @@ class SettingScreen:
                             2: (150, 90, 70),
                             3: (238, 199, 82)}
         box = pygame.Rect(x, y, box_width, box_height)
-
         self.option_button.append(box)
         pygame.draw.rect(self.mainscreen, option_box_color[color_num],
                          box, False, 15)
@@ -81,3 +86,6 @@ class SettingScreen:
         numberRect.center = (x + rect_width//2, y + rect_height//2)
         self.mainscreen.blit(number, numberRect)
 
+    def _draw_button_reaction(self,button):
+        pygame.draw.rect(self.mainscreen, (10, 10, 10), button, False, 15)
+        pygame.display.flip()
