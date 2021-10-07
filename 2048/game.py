@@ -3,6 +3,7 @@ import sys
 from settings import Settings
 from gameplay import Gameplay
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -24,14 +25,13 @@ class Game:
                     self._update_screen()
                     not_end = False
                 self._print_victory_message()
-                # pygame.display.flip()
                 continue
-            # if self._gameover_check():
-            #     if not_end:
-            #         self._update_screen()
-            #         not_end = False
-            #     self._print_gameover_message()
-            #     continue
+            if self._gameover_check():
+                if not_end:
+                    self._update_screen()
+                    not_end = False
+                self._print_gameover_message()
+                continue
             self._update_screen()
 
     def _update_screen(self):
@@ -47,7 +47,7 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 self._check_key_down_event(event)
 
-    def _check_key_down_event(self,event):
+    def _check_key_down_event(self, event):
         if event.key == pygame.K_RIGHT:
             before_pressed_grid = self.gameplay.getGrid()
             self.gameplay.move_event(key='r')
@@ -75,7 +75,7 @@ class Game:
     def _update_grid(self):
         self.draw_grid(self.screen,self.gameplay.getGrid(),self.myfont)
 
-    def draw_grid(self,screen,matrix,font):
+    def draw_grid(self, screen,matrix, font):
         space = 10
         width = self.settings.screen_width
         height = width
@@ -96,7 +96,7 @@ class Game:
                 #in số ở ô vuông tương ứng
                 self.draw_number(temp,matrix,x,y,rect_width,rect_height)
 
-    def draw_number(self,temp,matrix,x,y,rect_width,rect_height):
+    def draw_number(self, temp, matrix, x, y, rect_width, rect_height):
         if temp == 0:
             temp = ''
         number = self.myfont.render(str(temp),True,(10,10,10))
@@ -118,14 +118,21 @@ class Game:
         self.screen.blit(message, messageRect)
         pygame.display.flip()
     # kiểm tra xem còn ô trống hay không để kết thúc game
+
     def _gameover_check(self):
-        for i in self.gameplay.grid.flatten():
-            if i == 0:
-                return False
+        for i in range(self.settings.grid_size):
+            row = self.gameplay.grid[i, :]
+            col = self.gameplay.grid[:, i]
+            for j in range(len(row)-1):
+                if row[j] == row[j+1] or row[j] == 0 or row[j+1] == 0:
+                    return False
+            for j in range(len(col)-1):
+                if col[j] == col[j+1] or col[j] == 0 or col[j+1] == 0:
+                    return False
         return True
 
     def _print_gameover_message(self):
-        tempFont = pygame.font.SysFont('clear sans', 60, bold=True)
+        tempFont = pygame.font.SysFont('clear sans', 60, bold=False)
         message = tempFont.render("OUT OF MOVES, GAME OVER !!!", True, (10, 10, 10))
         messageRect = message.get_rect()
         messageRect.center = (self.settings.screen_width // 2, self.settings.screen_width // 2)

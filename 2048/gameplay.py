@@ -12,7 +12,7 @@ class Gameplay():
                                  dtype= int )
         # print(self.grid)
 
-    def next_number(self,k=1):
+    def next_number(self, k=1):
         #lấy tất cả các vị trí có gía trị = 0 trong ma trận
         unoccupied_pos = list( zip(*numpy.where(self.grid == 0)))
 
@@ -23,7 +23,7 @@ class Gameplay():
             else:
                 self.grid[pos] = 2
 
-    def move_event(self,key):
+    def move_event(self, key):
         for i in range(self.settings.grid_size):
             if key in 'lr': # nếu nhập vào là l hoặc r thì lấy hàng
                 this_row = self.grid[i,:]
@@ -48,7 +48,7 @@ class Gameplay():
             else:
                 self.grid[:, i] = new_this_row
 
-    def run(self,key):
+    def run(self, key):
         self.next_number(k = 2)
         while True:
             print(self.grid)
