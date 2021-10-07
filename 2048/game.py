@@ -2,21 +2,27 @@ import pygame
 import sys
 from settings import Settings
 from gameplay import Gameplay
+from settingscreen import SettingScreen
 
 
 class Game:
     def __init__(self):
         pygame.init()
         pygame.font.init()
-        self.myfont = pygame.font.SysFont('clear sans',50,bold=True)
+        self.myfont = pygame.font.SysFont('clear sans', 50, bold=True)
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width,
                                                self.settings.screen_width))
+        self.settingscreen = SettingScreen(self)
         self.gameplay = Gameplay()
-        self.gameplay.next_number()
         pygame.display.set_caption("2048")
 
     def run(self):
+        self.settingscreen.show_screen()
+        self.gameplay.settings = self.settingscreen.settings
+        self.gameplay._init_grid()
+        print(self.gameplay.getGrid())
+        self.gameplay.next_number()
         not_end = True
         while True:
             self._check_events()
@@ -35,7 +41,6 @@ class Game:
             self._update_screen()
 
     def _update_screen(self):
-        self._check_events()
         self.screen.fill(self.settings.bg_color)
         self._update_grid()
         pygame.display.flip()

@@ -6,18 +6,18 @@ from settings import Settings
 class Gameplay():
     def __init__(self):
         self.settings = Settings()
-        # Tạo một ma trận với kích cỡ cho trước trong settings
+
+    def _init_grid(self):
         self.grid = numpy.zeros((self.settings.grid_size,
                                  self.settings.grid_size),
-                                 dtype= int )
-        # print(self.grid)
+                                dtype=int)
 
     def next_number(self, k=1):
         #lấy tất cả các vị trí có gía trị = 0 trong ma trận
-        unoccupied_pos = list( zip(*numpy.where(self.grid == 0)))
+        unoccupied_pos = list(zip(*numpy.where(self.grid == 0)))
 
         # lấy ngẫu nhiên k vị trí trong list các vị trí = 0 để đặt 2 giá trị 2 hoặc 4
-        for pos in random.sample(unoccupied_pos,k):
+        for pos in random.sample(unoccupied_pos, k):
             if random.random() < .1:
                 self.grid[pos] = 4
             else:
@@ -61,7 +61,7 @@ class Gameplay():
                 continue
             self.next_number()
 
-#hàm lấy tập những số khác 0 trong list và xử lý theo cách chơi của 2048
+    #phương thức lấy tập những số khác 0 trong list và xử lý theo cách chơi của 2048
     @staticmethod
     def _get_num(row):
         this_n = row[row != 0]

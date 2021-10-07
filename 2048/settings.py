@@ -5,8 +5,8 @@ class Settings:
         self.screen_height = 800
         self.bg_color = (187, 173, 160)
 
-        self.grid_size = 4
-        #mã màu cho các số
+        self.grid_size = 2
+        # mã màu cho các số
         self.number_color = {0: (236, 203, 98),
                              2: (238, 228, 218),
                              4: (237, 224, 200),
