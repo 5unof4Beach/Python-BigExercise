@@ -23,6 +23,9 @@ class Settings:
 
         self._victory_point = 2048
 
+        self.fleet_direction_horizontal = 1
+        self.fleet_direction_vertical = 1
+
     # @staticmethod
     def get_victory_point(self):
         return self._victory_point

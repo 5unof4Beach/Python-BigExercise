@@ -3,6 +3,7 @@ import sys
 from settings import Settings
 from gameplay import Gameplay
 from settingscreen import SettingScreen
+from floatingrect import Floatingrect
 
 
 class Game:
@@ -14,6 +15,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.settings.screen_width,
                                                self.settings.screen_height))
         self.settingscreen = SettingScreen(self)
+        self.floatingrect = Floatingrect(self)
         self.gameplay = Gameplay()
         self.button_pressed_times = 0
         pygame.display.set_caption("2048")
@@ -43,9 +45,15 @@ class Game:
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
+        self._update_floatingrect()
         self._update_grid()
         self._draw_side_screen()
         pygame.display.flip()
+
+    def _update_floatingrect(self):
+        self.floatingrect.check_edge_hit()
+        self.floatingrect.update()
+        self.floatingrect.draw()
 
     def _check_events(self):
         for event in pygame.event.get():
