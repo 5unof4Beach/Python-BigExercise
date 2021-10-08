@@ -55,7 +55,7 @@ class SettingScreen:
                         self._draw_button_reaction(self.option_button[5])
 
     def _show_option(self):
-        self._draw_whatever("CHOOSE ACHIVEMENT:", self.settings.screen_width // 2 - 120 // 2, self.y + 10, 120, 60)
+        self._draw_whatever("CHOOSE GOAL:", self.settings.screen_width // 2 - 120 // 2, self.y + 10, 120, 60)
         self._draw_option_box(self.settings.screen_width // 2 - 120 // 2, self.y + 90, 120, 60, "16", 1)
         self._draw_option_box(self.settings.screen_width // 2 - 120 // 2, self.y + 160, 120, 60, "2048", 1)
         self._draw_option_box(self.settings.screen_width // 2 - 120 // 2, self.y + 230, 120, 60, "4096", 1)

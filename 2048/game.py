@@ -165,7 +165,7 @@ class Game:
 
     def _draw_side_screen(self):
         remain = self.settings.screen_width - self.settings.screen_height
-        self.print_message("Destination: " + str(self.settings.get_victory_point()), self.settings.screen_width - remain//2, 50)
+        self.print_message("Goal: " + str(self.settings.get_victory_point()), self.settings.screen_width - remain//2, 50)
         self.print_message("Button pressed: " + str(self.button_pressed_times) + " times", self.settings.screen_width - remain//2, 100)
         self.print_message("q: Exit Game", self.settings.screen_width - remain//2, self.settings.screen_height - 50)
 
