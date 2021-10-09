@@ -24,7 +24,6 @@ class Game:
         self.settingscreen.show_screen()
         self.gameplay.settings = self.settingscreen.settings
         self.gameplay.init_grid()
-        # print(self.gameplay.getGrid())
         self.gameplay.next_number()
         self.not_end = True
         while True:
@@ -92,13 +91,14 @@ class Game:
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_ESCAPE:
+            former_goal = self.settingscreen.settings.get_victory_point()
+            former_size = self.settingscreen.settings.grid_size
             self.settingscreen.show_screen()
-            self.gameplay.settings = self.settingscreen.settings
-            self.gameplay.init_grid()
-            self.gameplay.next_number()
-            self.not_end = True
-
-
+            if former_goal != self.settingscreen.settings.get_victory_point() or former_size != self.settingscreen.settings.grid_size or self.not_end == False:
+                self.gameplay.settings = self.settingscreen.settings
+                self.gameplay.init_grid()
+                self.gameplay.next_number()
+                self.not_end = True
 
     def _update_grid(self):
         self.draw_grid(self.screen, self.gameplay.get_grid())
