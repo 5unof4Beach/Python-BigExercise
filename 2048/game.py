@@ -26,19 +26,19 @@ class Game:
         self.gameplay.init_grid()
         # print(self.gameplay.getGrid())
         self.gameplay.next_number()
-        not_end = True
+        self.not_end = True
         while True:
             self._check_events()
             if self._victory_check():
-                if not_end:
+                if self.not_end:
                     self._update_screen()
-                    not_end = False
+                    self.not_end = False
                 self._print_victory_message()
                 continue
             if self._gameover_check():
-                if not_end:
+                if self.not_end:
                     self._update_screen()
-                    not_end = False
+                    self.not_end = False
                 self._print_gameover_message()
                 continue
             self._update_screen()
@@ -90,6 +90,15 @@ class Game:
             self.gameplay.move_event(key='d')
             if not self.gameplay.is_the_same(before_pressed_grid):
                 self.gameplay.next_number()
+
+        elif event.key == pygame.K_ESCAPE:
+            self.settingscreen.show_screen()
+            self.gameplay.settings = self.settingscreen.settings
+            self.gameplay.init_grid()
+            self.gameplay.next_number()
+            self.not_end = True
+
+
 
     def _update_grid(self):
         self.draw_grid(self.screen, self.gameplay.get_grid())
@@ -167,6 +176,7 @@ class Game:
         remain = self.settings.screen_width - self.settings.screen_height
         self.print_message("Goal: " + str(self.settings.get_victory_point()), self.settings.screen_width - remain//2, 50)
         self.print_message("Button pressed: " + str(self.button_pressed_times) + " times", self.settings.screen_width - remain//2, 100)
+        self.print_message("Esc: Options Screen", self.settings.screen_width - remain // 2, self.settings.screen_height - 100)
         self.print_message("q: Exit Game", self.settings.screen_width - remain//2, self.settings.screen_height - 50)
 
     def print_message(self, message, x, y):
