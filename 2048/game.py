@@ -91,10 +91,13 @@ class Game:
                 self.gameplay.next_number()
 
         elif event.key == pygame.K_ESCAPE:
+            # Khi đang chơi ấn ESC để chon lại settings
             former_goal = self.settingscreen.settings.get_victory_point()
             former_size = self.settingscreen.settings.grid_size
             self.settingscreen.show_screen()
-            if former_goal != self.settingscreen.settings.get_victory_point() or former_size != self.settingscreen.settings.grid_size or self.not_end == False:
+            if (former_goal != self.settingscreen.settings.get_victory_point() or
+            former_size != self.settingscreen.settings.grid_size or
+            self.not_end == False):
                 self.gameplay.settings = self.settingscreen.settings
                 self.gameplay.init_grid()
                 self.gameplay.next_number()
@@ -103,6 +106,7 @@ class Game:
     def _update_grid(self):
         self.draw_grid(self.screen, self.gameplay.get_grid())
 
+    # Vẽ các ô vuông ma trận
     def draw_grid(self, screen, matrix):
         space = 10
         radius = 10
@@ -143,6 +147,7 @@ class Game:
             return True
         return False
 
+    # in ra màn hinh thông báo "YOU WIN" khi đạt đc số mục tiêu
     def _print_victory_message(self):
         temp_font = pygame.font.SysFont('clear sans', 80, bold=True)
         message = temp_font.render("YOU WIN!!!", True, (10, 10, 10))
@@ -164,6 +169,7 @@ class Game:
                     return False
         return True
 
+    # in ra thông báo GAME OVER khi không còn nước đi
     def _print_gameover_message(self):
         temp_font = pygame.font.SysFont('clear sans', 60, bold=False)
         message = temp_font.render("OUT OF MOVES, GAME OVER !!!", True, (10, 10, 10))
@@ -172,6 +178,7 @@ class Game:
         self.screen.blit(message, message_rect)
         pygame.display.flip()
 
+    #in ra phânf thừa bên cạnh phải manf hình các thông sô và hướng dẫ nút
     def _draw_side_screen(self):
         remain = self.settings.screen_width - self.settings.screen_height
         self.print_message("Goal: " + str(self.settings.get_victory_point()), self.settings.screen_width - remain//2, 50)
