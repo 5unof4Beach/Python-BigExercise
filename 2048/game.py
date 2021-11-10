@@ -5,7 +5,7 @@ from gameplay import Gameplay
 from settingscreen import SettingScreen
 from floatingrect import Floatingrect
 
-
+# Class này chứa tấy cả các thành phần cần thiết để chạy game
 class Game:
     def __init__(self):
         pygame.init()
@@ -20,7 +20,7 @@ class Game:
         self.button_pressed_times = 0
         pygame.display.set_caption("2048")
 
-    def run(self):
+    def run(self):  # Đây là hàm được gọi đến để chạy game
         self.settingscreen.show_screen()
         self.gameplay.settings = self.settingscreen.settings
         self.gameplay.init_grid()
@@ -43,6 +43,10 @@ class Game:
             self._update_screen()
 
     def _update_screen(self):
+        # Đây là hàm cập nhật màn hình đồ họa như đổ màu cho background,
+        # cập nhật liên tục vị trí của số 2048 di chuyển trong màn hình,
+        # Cập nhật lại ma trận các ô vuông,
+        # Và in ra phần màn hình trống bên cạnh 2 thông số là mốc chiến thắng, số lần bấm nút và 2 huongs dẫn
         self.screen.fill(self.settings.bg_color)
         self._update_floatingrect()
         self._update_grid()
@@ -50,15 +54,19 @@ class Game:
         pygame.display.flip()
 
     def _update_floatingrect(self):
+        # Hàm này sẽ kiểm ta khi nào số 2048 trôi nổi trên màn hình chạm vào các cạnh màn hình
+        # rồi update vị trí và cuối cùng là hiển thị lên trên màn hình
         self.floatingrect.check_edge_hit()
         self.floatingrect.update()
         self.floatingrect.draw()
 
     def _check_events(self):
+        # Đây là hàm nhận và xử lý nhập liệu người dùng mà ở đây là 4 phím mũi tên
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 self._check_key_down_event(event)
 
+    # Hàm này nhận sự kiện bấm nút của người dùng để xử lý
     def _check_key_down_event(self, event):
         if event.key == pygame.K_q:
             sys.exit()
@@ -103,6 +111,7 @@ class Game:
                 self.gameplay.next_number()
                 self.not_end = True
 
+    # Cập nhật lại ma trận các ô
     def _update_grid(self):
         self.draw_grid(self.screen, self.gameplay.get_grid())
 
@@ -133,6 +142,8 @@ class Game:
                 # in số ở ô vuông tương ứng
                 self.draw_number(temp, x, y, rect_width, rect_height)
 
+    # Hàm này dùng để in các số trên cacsc ô trên ma trân
+    # Mỗi số có một màu khác nhau
     def draw_number(self, temp, x, y, rect_width, rect_height):
         if temp == 0:
             temp = ''
@@ -186,6 +197,8 @@ class Game:
         self.print_message("Esc: Options Screen", self.settings.screen_width - remain // 2, self.settings.screen_height - 100)
         self.print_message("q: Exit Game", self.settings.screen_width - remain//2, self.settings.screen_height - 50)
 
+    #Hàm này đơn giản chỉ là in nội dung theo nhu cầu
+    # Hàm yêu cầu nhập vào nội dung muốn in và tọa độ x, y trên màn hình
     def print_message(self, message, x, y):
         temp_font = pygame.font.SysFont('clear sans', 40, bold=False)
         message = temp_font.render(str(message), True, (10, 10, 10))

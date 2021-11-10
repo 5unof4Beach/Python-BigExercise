@@ -13,7 +13,7 @@ class Gameplay:
                                  self.settings.grid_size),
                                 dtype=int)
 
-    def next_number(self, k=1):
+    def next_number(self, k=1):#Hàm này để lấy ngẫu nhiên 2 số 2 hoặc 4 để đặt vào những vị trí có giá trị = 0 trên ma trận
         # lấy tất cả các vị trí có gía trị = 0 trong ma trận
         unoccupied_pos = list(zip(*numpy.where(self.grid == 0)))
 
@@ -26,6 +26,8 @@ class Gameplay:
                 self.grid[pos] = 2
 
     def move_event(self, key):
+        # Hàm này sẽ nhậm tham số là l,r,u,d và được gọi đến khi có sự kiện ấn nút của người dùng
+        # sau khi nhận tham số thì hàm sẽ tiến hành xử lí cho giống với logic game 2048
         for i in range(self.settings.grid_size):
             flipped = False
             if key in 'lr':  # nếu nhập vào là l hoặc r thì lấy hàng
@@ -69,6 +71,7 @@ class Gameplay:
                 res.append(this_n[i])
         return res
 
+    # Hàm này để test
     def __str__(self):
         return str(self.grid)
 
@@ -77,5 +80,6 @@ class Gameplay:
         if all((self.grid.flatten() == previous_grid.flatten())):
             return True
 
+    # trả về một bản sao trước khi thay dổi của ma trận
     def get_grid(self):
         return self.grid.copy()

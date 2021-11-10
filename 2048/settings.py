@@ -1,4 +1,4 @@
-
+# Các thông số cài đặt của game được đặt ở class này
 class Settings:
     def __init__(self):
         self.screen_width = 1200
@@ -27,5 +27,5 @@ class Settings:
         self.floatingrect_direction_vertical = 1
 
     # @staticmethod
-    def get_victory_point(self):
+    def get_victory_point(self): # trả về mốc điểm chiến thắng
         return self._victory_point
