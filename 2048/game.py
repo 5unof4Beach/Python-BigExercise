@@ -1,5 +1,6 @@
 import pygame
 import sys
+import BOT as bot
 from settings import Settings
 from gameplay import Gameplay
 from settingscreen import SettingScreen
@@ -46,7 +47,7 @@ class Game:
         # Đây là hàm cập nhật màn hình đồ họa như đổ màu cho background,
         # cập nhật liên tục vị trí của số 2048 di chuyển trong màn hình,
         # Cập nhật lại ma trận các ô vuông,
-        # Và in ra phần màn hình trống bên cạnh 2 thông số là mốc chiến thắng, số lần bấm nút và 2 huongs dẫn
+        # Và in ra phần màn hình trống bên cạnh 2 thông số là mốc chiến thắng, số lần bấm nút và 2 huong dẫn
         self.screen.fill(self.settings.bg_color)
         self._update_floatingrect()
         self._update_grid()
@@ -70,33 +71,24 @@ class Game:
     def _check_key_down_event(self, event):
         if event.key == pygame.K_q:
             sys.exit()
+
+        elif event.key == pygame.K_SPACE:
+            print(self.gameplay.get_grid().flatten())
+            bot.createMiniMaxTree(2, self.gameplay.get_grid().flatten())
+            self._button_pressed_process(bot.getMoves())
+            print(bot.getMoves())
+
         elif event.key == pygame.K_RIGHT:
-            self.button_pressed_times += 1
-            before_pressed_grid = self.gameplay.get_grid()
-            self.gameplay.move_event(key='r')
-            if not self.gameplay.is_the_same(before_pressed_grid):
-                self.gameplay.next_number()
+            self._button_pressed_process('r')
 
         elif event.key == pygame.K_LEFT:
-            self.button_pressed_times += 1
-            before_pressed_grid = self.gameplay.get_grid()
-            self.gameplay.move_event(key='l')
-            if not self.gameplay.is_the_same(before_pressed_grid):
-                self.gameplay.next_number()
+            self._button_pressed_process('l')
 
         elif event.key == pygame.K_UP:
-            self.button_pressed_times += 1
-            before_pressed_grid = self.gameplay.get_grid()
-            self.gameplay.move_event(key='u')
-            if not self.gameplay.is_the_same(before_pressed_grid):
-                self.gameplay.next_number()
+            self._button_pressed_process('u')
 
         elif event.key == pygame.K_DOWN:
-            self.button_pressed_times += 1
-            before_pressed_grid = self.gameplay.get_grid()
-            self.gameplay.move_event(key='d')
-            if not self.gameplay.is_the_same(before_pressed_grid):
-                self.gameplay.next_number()
+            self._button_pressed_process('d')
 
         elif event.key == pygame.K_ESCAPE:
             # Khi đang chơi ấn ESC để chon lại settings
@@ -110,6 +102,13 @@ class Game:
                 self.gameplay.init_grid()
                 self.gameplay.next_number()
                 self.not_end = True
+
+    def _button_pressed_process(self, key):
+        self.button_pressed_times += 1
+        before_pressed_grid = self.gameplay.get_grid()
+        self.gameplay.move_event(key = key)
+        if not self.gameplay.is_the_same(before_pressed_grid):
+            self.gameplay.next_number()
 
     # Cập nhật lại ma trận các ô
     def _update_grid(self):

@@ -11,7 +11,7 @@ class Gameplay:
     def init_grid(self):
         self.grid = numpy.zeros((self.settings.grid_size,
                                  self.settings.grid_size),
-                                dtype=int)
+                                 dtype=int)
 
     def next_number(self, k=1):#Hàm này để lấy ngẫu nhiên 2 số 2 hoặc 4 để đặt vào những vị trí có giá trị = 0 trên ma trận
         # lấy tất cả các vị trí có gía trị = 0 trong ma trận
