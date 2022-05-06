@@ -40,9 +40,8 @@ def alphaBetaPruning(node, grid, parent, depth, alpha, beta):
         for i in range(4):
             nodeNumber += 1
             childList[node].append(nodeNumber)
-            if movePossible(grid, directions[i]) == True:
-                # alpha = max(alpha, alphaBetaPruning(nodeNumber, swipeGrid(grid, directions[i]), node, depth-1, alpha, beta))
-                alpha = max(alpha, alphaBetaPruning(nodeNumber, swipeGrid2(grid, directions[i]), node, depth - 1, alpha, beta))
+            if movable(grid, directions[i]) == True:
+                alpha = max(alpha, alphaBetaPruning(nodeNumber, move(grid,directions[i]), node, depth - 1, alpha, beta))
             if alpha >= beta:
                 break
         nodeScores[node] = alpha

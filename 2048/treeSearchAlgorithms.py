@@ -6,84 +6,60 @@ DOWN = 'd'
 LEFT = 'l'
 RIGHT = 'r'
 DIR = 0
-def swipeRow(row):
-    previous = -1  # previous non-zero element
-    i = 0
-    temp = [0, 0, 0, 0]
 
-    for element in row:
+def move(flattenedGrid, key):
+    # temp = grid
+    grid = numpy.zeros((4, 4), dtype=int)
 
-        if element != 0:
-            if previous == -1:
-                previous = element
-                temp[i] = element
-                i += 1
-            elif previous == element:
-                temp[i - 1] = 2 * element
-                previous = -1
-            else:
-                previous = element
-                temp[i] = element
-                i += 1
-    return temp
+    for i in range(4):
+        grid[i][:] = flattenedGrid[i*4:i*4+4]
 
-# Swapping the given grid in given direction
-def swipeGrid(grid, direction):
-    temp = [0,0,0,0,
-            0,0,0,0,
-            0,0,0,0,
-            0,0,0,0]
+    for i in range(4):
+        flipped = False
+        if key in 'lr':  # nếu nhập vào là l hoặc r thì lấy hàng
+            this_row = grid[i, :]
+        else:
+            this_row = grid[:, i]  # u hoăc d thì lấy cột
 
-    if direction == UP:
-        for i in range(4):
-            row = []
-            for j in range(4):
-                row.append(grid[i + 4*j])
+        if key in 'rd':  # nếu là r hoặc d thì lật ngược list để có thể tận dụng hàm get num
+            flipped = True
+            this_row = this_row[::-1]
 
-            row = swipeRow(row)
+        this_n = _get_num(this_row)  # list những số != 0 trong hàng
+        # print(this_n)
+        new_this_row = numpy.zeros_like(this_row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
+        new_this_row[:len(this_n)] = this_n  # gắn các giá trị != 0 vào mảng mới
 
-            for j in range(4):
-                temp[i+4*j] = row[j]
+        if flipped:
+            new_this_row = new_this_row[::-1]
 
-    elif direction == DOWN:
-        for i in range(4):
-            row = []
-            for j in range(3, -1, -1):
-                row.append(grid[i + 4*j])
-            row = swipeRow(row)
-            k=0
-            for j in range(3, -1, -1):
-                temp[i+4*j] = row[k]
-                k += 1
+        if key in 'lr':
+            # grid[i, :] = new_this_row
+            grid[i, :] = new_this_row
+        else:
+            # grid[:, i] = new_this_row
+            grid[:, i] = new_this_row
 
-    elif direction == LEFT:
-        for i in range(4):
-            row = []
-            for j in range(4):
-                row.append(grid[i*4 + j])
-            row = swipeRow(row)
-            for j in range(4):
-                temp[i*4 + j] = row[j]
+    return grid.flatten()
 
-    elif direction == RIGHT:
-        for i in range(4):
-            row = []
-            for j in range(3, -1, -1):
-                row.append(grid[i*4 + j])
-            row = swipeRow(row)
-            k = 0
-            for j in range(3, -1, -1):
-                temp[4*i + j] = row[k]
-                k += 1
-    return temp
+def _get_num(row):
+    this_n = row[row != 0]
+    res = []
+    skip = False
+    for i in range(len(this_n)):
+        if skip:
+            skip = False
+            continue
+        if i != len(this_n) - 1 and this_n[i] == this_n[i + 1]:  # nếu 2 số liền nhau mà giống nhau thì cộng lại và cho vào mảng mới
+            sum = this_n[i] * 2
+            res.append(sum)
+            skip = True
+        else:
+            res.append(this_n[i])
+    return res
 
-# Swapping the given grid in given direction
-
-
-# Checking if the move is possible
-def movePossible(grid, direction):
-    # if all(grid == swipeGrid(grid, direction)):
-    if all(grid.flatten() == swipeGrid2(grid, direction)):
+def movable(grid, direction):
+    if all(grid.flatten() == move(grid, direction)):
         return False
     else:
         return True
@@ -240,55 +216,3 @@ def getScore(grid):
 
 
 
-def swipeGrid2(flattenedGrid, key):
-    # temp = grid
-    grid = numpy.zeros((4, 4), dtype=int)
-
-    for i in range(5):
-        grid[i] = flattenedGrid[i*4:i*4+3]
-
-    temp = grid
-
-    for i in range(4):
-        flipped = False
-        if key in 'lr':  # nếu nhập vào là l hoặc r thì lấy hàng
-            this_row = grid[i, :]
-        else:
-            this_row = grid[:, i]  # u hoăc d thì lấy cột
-
-        if key in 'rd':  # nếu là r hoặc d thì lật ngược list để có thể tận dụng hàm get num
-            flipped = True
-            this_row = this_row[::-1]
-
-        this_n = _get_num(this_row)  # list những số != 0 trong hàng
-        # print(this_n)
-        new_this_row = numpy.zeros_like(this_row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
-        new_this_row[:len(this_n)] = this_n  # gắn các giá trị != 0 vào mảng mới
-
-        if flipped:
-            new_this_row = new_this_row[::-1]
-
-        if key in 'lr':
-            # grid[i, :] = new_this_row
-            temp[i, :] = new_this_row
-        else:
-            # grid[:, i] = new_this_row
-            temp[:, i] = new_this_row
-
-    return temp.flatten()
-
-def _get_num(row):
-    this_n = row[row != 0]
-    res = []
-    skip = False
-    for i in range(len(this_n)):
-        if skip:
-            skip = False
-            continue
-        if i != len(this_n) - 1 and this_n[i] == this_n[i + 1]:  # nếu 2 số liền nhau mà giống nhau thì cộng lại và cho vào mảng mới
-            sum = this_n[i] * 2
-            res.append(sum)
-            skip = True
-        else:
-            res.append(this_n[i])
-    return res
