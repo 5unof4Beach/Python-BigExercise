@@ -11,6 +11,7 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.font.init()
+        clock = pygame.time.Clock()
         self.myfont = pygame.font.SysFont('clear sans', 50, bold=True)
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width,
@@ -29,12 +30,15 @@ class Game:
         self.not_end = True
         while True:
             self._check_events()
+            # self.botAutoPlay()
+
             if self._victory_check():
                 if self.not_end:
                     self._update_screen()
                     self.not_end = False
                 self._print_victory_message()
                 continue
+
             if self._gameover_check():
                 if self.not_end:
                     self._update_screen()
@@ -42,6 +46,14 @@ class Game:
                 self._print_gameover_message()
                 continue
             self._update_screen()
+
+    def botAutoPlay(self):
+        while True:
+            print(self.gameplay.get_grid().flatten())
+            bot.createMiniMaxTree(2, self.gameplay.get_grid().flatten())
+            self._button_pressed_process(bot.getMoves())
+            print(bot.getMoves())
+            pygame.time.set_timer(pygame.USEREVENT, 1000)
 
     def _update_screen(self):
         # Đây là hàm cập nhật màn hình đồ họa như đổ màu cho background,
@@ -72,12 +84,15 @@ class Game:
         if event.key == pygame.K_q:
             sys.exit()
 
+        elif event.key == pygame.K_b:
+            self.botAutoPlay()
+
         elif event.key == pygame.K_SPACE:
             print(self.gameplay.get_grid().flatten())
             bot.createMiniMaxTree(2, self.gameplay.get_grid().flatten())
             self._button_pressed_process(bot.getMoves())
             print(bot.getMoves())
-
+            
         elif event.key == pygame.K_RIGHT:
             self._button_pressed_process('r')
 

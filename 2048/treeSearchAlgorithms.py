@@ -1,4 +1,5 @@
 import numpy
+import math
 
 # Constant values representing directions
 UP = 'u'
@@ -7,55 +8,55 @@ LEFT = 'l'
 RIGHT = 'r'
 DIR = 0
 
+
+
 def move(flattenedGrid, key):
     # temp = grid
-    grid = numpy.zeros((4, 4), dtype=int)
+    size = int(math.sqrt(len(flattenedGrid)))
+    grid = numpy.zeros((size, size), dtype=int)
 
-    for i in range(4):
-        grid[i][:] = flattenedGrid[i*4:i*4+4]
+    for i in range(size):
+        grid[i][:] = flattenedGrid[i*size : size*(i + 1)]
 
-    for i in range(4):
+    for i in range(size):
         flipped = False
         if key in 'lr':  # nếu nhập vào là l hoặc r thì lấy hàng
-            this_row = grid[i, :]
+            row = grid[i, :]
         else:
-            this_row = grid[:, i]  # u hoăc d thì lấy cột
+            row = grid[:, i]  # u hoăc d thì lấy cột
 
         if key in 'rd':  # nếu là r hoặc d thì lật ngược list để có thể tận dụng hàm get num
             flipped = True
-            this_row = this_row[::-1]
+            row = row[::-1]
 
-        this_n = _get_num(this_row)  # list những số != 0 trong hàng
-        # print(this_n)
-        new_this_row = numpy.zeros_like(this_row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
-        new_this_row[:len(this_n)] = this_n  # gắn các giá trị != 0 vào mảng mới
+        notZeros = _get_num(row)  # list những số != 0 trong hàng
+        newRow = numpy.zeros_like(row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
+        newRow[:len(notZeros)] = notZeros  # gắn các giá trị != 0 vào mảng mới
 
         if flipped:
-            new_this_row = new_this_row[::-1]
+            newRow = newRow[::-1]
 
         if key in 'lr':
-            # grid[i, :] = new_this_row
-            grid[i, :] = new_this_row
+            grid[i, :] = newRow
         else:
-            # grid[:, i] = new_this_row
-            grid[:, i] = new_this_row
+            grid[:, i] = newRow
 
     return grid.flatten()
 
 def _get_num(row):
-    this_n = row[row != 0]
+    notZeros = row[row != 0]
     res = []
     skip = False
-    for i in range(len(this_n)):
+    for i in range(len(notZeros)):
         if skip:
             skip = False
             continue
-        if i != len(this_n) - 1 and this_n[i] == this_n[i + 1]:  # nếu 2 số liền nhau mà giống nhau thì cộng lại và cho vào mảng mới
-            sum = this_n[i] * 2
+        if i != len(notZeros) - 1 and notZeros[i] == notZeros[i + 1]:  # nếu 2 số liền nhau mà giống nhau thì cộng lại và cho vào mảng mới
+            sum = notZeros[i] * 2
             res.append(sum)
             skip = True
         else:
-            res.append(this_n[i])
+            res.append(notZeros[i])
     return res
 
 def movable(grid, direction):
@@ -184,15 +185,30 @@ def positionOfMaxValueHeuristic(grid):
     else:
         return -5000
 
-# Heuristic using weighted grid to determine how many bonus points we are supposed to give
-def weightedTilesHeuristic(grid):
-    scoreGrid = [1000 , 700, 400, 200,
+scoreGrid = {4:[
+                1000 , 700, 400, 200,
                  700, 300, 100, 100,
                  400, 100, 100, 100,
-                 200, 100, 100, 100]
+                 200, 100, 100, 100
+                 ],
+            8:[
+                10000 , 7000, 4000, 1000, 1000, 1000, 700, 500,
+                 7000, 3000, 1000, 1000, 1000, 1000, 1000, 1000,
+                 4000, 1000, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500
+            ]   }
+
+def weightedTilesHeuristic(grid):
+    size = int(math.sqrt(len(grid)))
+
+    weightedGrid = scoreGrid[size]
     score = 0
-    for i in range(16):
-        score += grid[i] * scoreGrid[i]
+    for i in range(size**2):
+        score += grid[i] * weightedGrid[i]
 
     return score
 
