@@ -1,6 +1,5 @@
 import math
-
-from treeSearchAlgorithms import *
+from decisionMaking import *
 
 # Array containing score for every node in MiniMaxTree
 nodeScores = [0 for x in range(50000)]
@@ -8,7 +7,7 @@ nodeScores = [0 for x in range(50000)]
 childList = [[0 for x in range(0)] for y in range(50000)]
 # Global counter for actual node number
 nodeNumber = 1
-# Array of constants for directions
+
 directions = ['u', 'd', 'l', 'r']
 
 # Clears above arrays and making MiniMaXTree of given depth
@@ -31,7 +30,7 @@ def alphaBetaPruning(node, grid, parent, depth, alpha, beta):
 
     # Terminal state
     if depth == 0:
-        nodeScores[node] = getScore(grid)
+        nodeScores[node] = calculateScore(grid)
         return nodeScores[node]
 
     # The turn of the player. I am making a new node for every possible move
@@ -65,7 +64,7 @@ def alphaBetaPruning(node, grid, parent, depth, alpha, beta):
             grid[i] = 0
 
         for i in gridTable:
-            gridTableScores.append(getScore(i))
+            gridTableScores.append(calculateScore(i))
 
         for i in range(4):
             minimumScore = min(gridTableScores)
@@ -83,7 +82,6 @@ def alphaBetaPruning(node, grid, parent, depth, alpha, beta):
         nodeScores[node] = beta
         return beta
 
-# Returning the best move to perform
 def getMoves():
     searchedValue = nodeScores[1]
 

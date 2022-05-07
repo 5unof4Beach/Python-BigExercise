@@ -31,26 +31,26 @@ class Gameplay:
         for i in range(self.settings.grid_size):
             flipped = False
             if key in 'lr':  # nếu nhập vào là l hoặc r thì lấy hàng
-                this_row = self.grid[i, :]
+                row = self.grid[i, :]
             else:
-                this_row = self.grid[:, i]  # u hoăc d thì lấy cột
+                row = self.grid[:, i]  # u hoăc d thì lấy cột
 
             if key in 'rd':  # nếu là r hoặc d thì lật ngược list để có thể tận dụng hàm get num
                 flipped = True
-                this_row = this_row[::-1]
+                row = row[::-1]
 
-            this_n = self._get_num(this_row)  # list những số != 0 trong hàng
+            this_n = self._get_num(row)  # list những số != 0 trong hàng
             # print(this_n)
-            new_this_row = numpy.zeros_like(this_row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
-            new_this_row[:len(this_n)] = this_n  # gắn các giá trị != 0 vào mảng mới
+            new_row = numpy.zeros_like(row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
+            new_row[:len(this_n)] = this_n  # gắn các giá trị != 0 vào mảng mới
 
             if flipped:
-                new_this_row = new_this_row[::-1]
+                new_row = new_row[::-1]
 
             if key in 'lr':
-                self.grid[i, :] = new_this_row
+                self.grid[i, :] = new_row
             else:
-                self.grid[:, i] = new_this_row
+                self.grid[:, i] = new_row
 
     # phương thức lấy tập những số khác 0 trong list và xử lý theo cách chơi của 2048
     @staticmethod

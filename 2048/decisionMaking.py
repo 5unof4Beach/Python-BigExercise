@@ -1,12 +1,24 @@
 import numpy
 import math
 
-UP = 'u'
-DOWN = 'd'
-LEFT = 'l'
-RIGHT = 'r'
-DIR = 0
+scoreGrid = {4:[
+                1000 , 700, 400, 200,
+                 700, 300, 100, 100,
+                 400, 100, 100, 100,
+                 200, 100, 100, 100
+            ],
 
+            8:[
+                10000 , 7000, 4000, 1000, 1000, 1000, 700, 500,
+                 7000, 3000, 1000, 1000, 1000, 1000, 1000, 1000,
+                 4000, 1000, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500,
+                 500, 500, 500, 500,500, 500, 500, 500
+            ]   
+            }
 
 def move(flattenedGrid, key):
     # temp = grid
@@ -27,7 +39,7 @@ def move(flattenedGrid, key):
             flipped = True
             row = row[::-1]
 
-        notZeros = _get_num(row)  # list những số != 0 trong hàng
+        notZeros = checkAndSum(row)  
         newRow = numpy.zeros_like(row)  # tạo một hàng mới chỉ chứa số 0 có kích cỡ giống hàng cũ
         newRow[:len(notZeros)] = notZeros  # gắn các giá trị != 0 vào mảng mới
 
@@ -41,7 +53,7 @@ def move(flattenedGrid, key):
 
     return grid.flatten()
 
-def _get_num(row):
+def checkAndSum(row):
     notZeros = row[row != 0]
     res = []
     skip = False
@@ -64,21 +76,22 @@ def movable(grid, direction):
         return True
 
 
-# Heuristic giving bonus points for every empty tile on the board
-def emptyTilesHeuristic(grid):
+# Cong rhem diem voi moi o trong
+def emptyValueScore(grid):
     return len(list(*numpy.where(grid == 0)))
 
-# Heuristic giving bonus points for maximum value on the board
+#Cong them diem cho gia tri lon nhat
 def maxValueInGrid(grid):
     maxVal = -1
     maxVal = max(grid)
     return maxVal
 
 # Cong them diem neu hieu cac o canh nhau nho
-def smoothnessHeuristic(grid):
+def smallDifferentScore(grid):
     smoothness = 0
     size = int(math.sqrt(len(grid)))
 
+    #Theo Hang
     for i in range(size):
         current = 0
         while current < size and grid[size*i + current] == 0:
@@ -100,6 +113,7 @@ def smoothnessHeuristic(grid):
             current = next
             next += 1
 
+    #Theo Cot
     for i in range(size):
         current = 0
         while current < size and grid[current*size + i] == 0:
@@ -124,8 +138,8 @@ def smoothnessHeuristic(grid):
     return smoothness*10
 
 # Cong Them Diem Neu cac hang hay cot co cac so giong nhau
-def monotonicityHeurictic(grid):
-    monotonicityScores = [0, 0, 0, 0]
+def similarityScore(grid):
+    similarityScores = [0, 0, 0, 0]
 
     # left/right direction
     for i in range(4):
@@ -141,9 +155,9 @@ def monotonicityHeurictic(grid):
             nextValue = grid[i*4 + next]
 
             if currentValue > nextValue:
-                monotonicityScores[0] += nextValue - currentValue
+                similarityScores[0] += nextValue - currentValue
             elif nextValue > currentValue:
-                monotonicityScores[1] += currentValue - nextValue
+                similarityScores[1] += currentValue - nextValue
 
             current = next
             next += 1
@@ -162,13 +176,13 @@ def monotonicityHeurictic(grid):
                 nextValue = grid[i + 4*next]
 
                 if currentValue > nextValue:
-                    monotonicityScores[2] += nextValue - currentValue
+                    similarityScores[2] += nextValue - currentValue
                 elif nextValue > currentValue:
-                    monotonicityScores[3] += currentValue - nextValue
+                    similarityScores[3] += currentValue - nextValue
             current = next
             next += 1
 
-    return 20* max(monotonicityScores[0], monotonicityScores[1]) + max(monotonicityScores[2], monotonicityScores[3])
+    return 20* max(similarityScores[0], similarityScores[1]) + max(similarityScores[2], similarityScores[3])
 
 # Neu gia tri lon nhat cua grid nam o 1 trong 4 goc thi cong them diem
 def maxValueAtCorner(grid):
@@ -184,31 +198,13 @@ def maxValueAtCorner(grid):
     else:
         return -5000
 
-scoreGrid = {4:[
-                1000 , 700, 400, 200,
-                 700, 300, 100, 100,
-                 400, 100, 100, 100,
-                 200, 100, 100, 100
-            ],
+#Tinh diem theo trong so moi o
+def weightedGridScore(grid):
 
-            8:[
-                10000 , 7000, 4000, 1000, 1000, 1000, 700, 500,
-                 7000, 3000, 1000, 1000, 1000, 1000, 1000, 1000,
-                 4000, 1000, 500, 500,500, 500, 500, 500,
-                 500, 500, 500, 500,500, 500, 500, 500,
-                 500, 500, 500, 500,500, 500, 500, 500,
-                 500, 500, 500, 500,500, 500, 500, 500,
-                 500, 500, 500, 500,500, 500, 500, 500,
-                 500, 500, 500, 500,500, 500, 500, 500
-            ]   
-            }
-
-def weightedTilesHeuristic(grid):
     size = int(math.sqrt(len(grid)))
-
     weightedGrid = scoreGrid[size]
-
     score = 0
+
     for i in range(size**2):
         score += grid[i] * weightedGrid[i]
 
@@ -216,17 +212,16 @@ def weightedTilesHeuristic(grid):
 
 
 # Tinh tong diem de chon nuoc di
-def getScore(grid):
-    emptyTilesScore = emptyTilesHeuristic(grid) * 100
-    maxValueScore = maxValueInGrid(grid) * 4
-    smoothnessScore = smoothnessHeuristic(grid) * 15
-    monotonicityScore = monotonicityHeurictic(grid) * 40
-    positionOfMaxValueScore = maxValueAtCorner(grid) * 10
-    weightedTilesScore = weightedTilesHeuristic(grid)
+def calculateScore(grid):
 
-    # Exemplary score, try to modify it along with constants above
-    # Little change can make huge difference
-    return weightedTilesScore + smoothnessScore + emptyTilesScore + maxValueScore + monotonicityScore + positionOfMaxValueScore
+    maxValScore = emptyValueScore(grid) * 100
+    maxValScore = maxValueInGrid(grid) * 4
+    smallDiffScore = smallDifferentScore(grid) * 15
+    simiScore = similarityScore(grid) * 40
+    positionOfMaxValueScore = maxValueAtCorner(grid) * 10
+    weightedScore = weightedGridScore(grid)
+
+    return weightedScore + smallDiffScore + maxValScore + maxValScore + simiScore + positionOfMaxValueScore
 
 
 
