@@ -15,10 +15,10 @@ class Gameplay:
 
     def next_number(self, k=1):#Hàm này để lấy ngẫu nhiên 2 số 2 hoặc 4 để đặt vào những vị trí có giá trị = 0 trên ma trận
         # lấy tất cả các vị trí có gía trị = 0 trong ma trận
-        unoccupied_pos = list(zip(*numpy.where(self.grid == 0)))
+        zeros_pos = list(zip(*numpy.where(self.grid == 0)))
 
         # lấy ngẫu nhiên k vị trí trong list các vị trí = 0 để đặt 2 giá trị 2 hoặc 4
-        for pos in random.sample(unoccupied_pos, k):
+        for pos in random.sample(zeros_pos, k):
             rand = random.randint(0, 1)
             if rand == 0:
                 self.grid[pos] = 4

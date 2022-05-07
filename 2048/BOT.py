@@ -49,10 +49,7 @@ def alphaBetaPruning(node, grid, parent, depth, alpha, beta):
 
     # The turn of the computer. I am looking through every possible outcome and picking up the worst ones
     else:
-        zeros = []
-        for i in range(16):
-            if grid[i] == 0:
-                zeros.append(i)
+        zeros = list(*numpy.where(grid == 0))
 
         gridTable = [[0 for x in range(16)] for y in range(0) ]
         gridTableScores = []

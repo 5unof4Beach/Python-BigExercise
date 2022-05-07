@@ -1,13 +1,11 @@
 import numpy
 import math
 
-# Constant values representing directions
 UP = 'u'
 DOWN = 'd'
 LEFT = 'l'
 RIGHT = 'r'
 DIR = 0
-
 
 
 def move(flattenedGrid, key):
@@ -68,61 +66,56 @@ def movable(grid, direction):
 
 # Heuristic giving bonus points for every empty tile on the board
 def emptyTilesHeuristic(grid):
-    zeros = 0
-    for i in range(16):
-        if grid[i] == 0:
-            zeros += 1
-
-    return zeros
+    return len(list(*numpy.where(grid == 0)))
 
 # Heuristic giving bonus points for maximum value on the board
-def maxValueHeuristic(grid):
-    maximumValue = -1
-    for i in range(16):
-        maximumValue = max(maximumValue, grid[i])
+def maxValueInGrid(grid):
+    maxVal = -1
+    maxVal = max(grid)
+    return maxVal
 
-    return maximumValue
-
-# Heuristic giving bonus points for minimizing differences between adjacent tiles
+# Cong them diem neu hieu cac o canh nhau nho
 def smoothnessHeuristic(grid):
     smoothness = 0
-    for i in range(4):
+    size = int(math.sqrt(len(grid)))
+
+    for i in range(size):
         current = 0
-        while current < 4 and grid[4*i + current] == 0:
+        while current < size and grid[size*i + current] == 0:
             current += 1
-        if current >= 4:
+        if current >= size:
             continue
 
         next = current + 1
-        while next < 4:
-            while next < 4 and grid[i*4 + next] == 0:
+        while next < size:
+            while next < size and grid[i*size + next] == 0:
                 next += 1
-            if next >= 4:
+            if next >= size:
                 break
 
-            currentValue = grid[i*4 + current]
-            nextValue = grid[i*4 + next]
+            currentValue = grid[i*size + current]
+            nextValue = grid[i*size + next]
             smoothness -= abs(currentValue - nextValue)
 
             current = next
             next += 1
 
-    for i in range(4):
+    for i in range(size):
         current = 0
-        while current < 4 and grid[current*4 + i] == 0:
+        while current < size and grid[current*size + i] == 0:
             current += 1
-        if current >= 4:
+        if current >= size:
             continue
 
         next = current + 1
-        while next < 4:
-            while next < 4 and grid[4*next + i]:
+        while next < size:
+            while next < size and grid[size*next + i]:
                 next += 1
-            if next >= 4:
+            if next >= size:
                 break
 
-            currentValue = grid[current*4 + i]
-            nextValue = grid[next*4 + i]
+            currentValue = grid[current*size + i]
+            nextValue = grid[next*size + i]
             smoothness -= abs(currentValue - nextValue)
 
             current = next
@@ -130,7 +123,7 @@ def smoothnessHeuristic(grid):
 
     return smoothness*10
 
-# Heurisitc giving bonus poitns for monotonic rows of tiles
+# Cong Them Diem Neu cac hang hay cot co cac so giong nhau
 def monotonicityHeurictic(grid):
     monotonicityScores = [0, 0, 0, 0]
 
@@ -177,10 +170,16 @@ def monotonicityHeurictic(grid):
 
     return 20* max(monotonicityScores[0], monotonicityScores[1]) + max(monotonicityScores[2], monotonicityScores[3])
 
-# Heuristic giving bonus points for placing tile with maximum value at the corner of the board
-def positionOfMaxValueHeuristic(grid):
-    maxValue = maxValueHeuristic(grid)
-    if maxValue == grid[0] or maxValue == grid[3] or maxValue == grid[12] or maxValue == grid[15]:
+# Neu gia tri lon nhat cua grid nam o 1 trong 4 goc thi cong them diem
+def maxValueAtCorner(grid):
+    size = int(math.sqrt(len(grid)))
+    TL = 0
+    TR = size - 1
+    BR = size**2 - 1
+    BL = BR - size - 1
+    maxVal = maxValueInGrid(grid)
+    maxValPos = list(*numpy.where(grid == maxVal))
+    if TL in maxValPos or TR in maxValPos or BL in maxValPos or BR in maxValPos:
         return 5000
     else:
         return -5000
@@ -190,7 +189,8 @@ scoreGrid = {4:[
                  700, 300, 100, 100,
                  400, 100, 100, 100,
                  200, 100, 100, 100
-                 ],
+            ],
+
             8:[
                 10000 , 7000, 4000, 1000, 1000, 1000, 700, 500,
                  7000, 3000, 1000, 1000, 1000, 1000, 1000, 1000,
@@ -200,12 +200,14 @@ scoreGrid = {4:[
                  500, 500, 500, 500,500, 500, 500, 500,
                  500, 500, 500, 500,500, 500, 500, 500,
                  500, 500, 500, 500,500, 500, 500, 500
-            ]   }
+            ]   
+            }
 
 def weightedTilesHeuristic(grid):
     size = int(math.sqrt(len(grid)))
 
     weightedGrid = scoreGrid[size]
+
     score = 0
     for i in range(size**2):
         score += grid[i] * weightedGrid[i]
@@ -213,19 +215,18 @@ def weightedTilesHeuristic(grid):
     return score
 
 
-# Function returning score of the given graph   
-# Feel free to modify it and play with the constants :)
+# Tinh tong diem de chon nuoc di
 def getScore(grid):
     emptyTilesScore = emptyTilesHeuristic(grid) * 100
-    maxValueScore = maxValueHeuristic(grid) * 4
-    smoothnessScore = smoothnessHeuristic(grid) * 10
+    maxValueScore = maxValueInGrid(grid) * 4
+    smoothnessScore = smoothnessHeuristic(grid) * 15
     monotonicityScore = monotonicityHeurictic(grid) * 40
-    positionOfMaxValueScore = positionOfMaxValueHeuristic(grid) * 5
+    positionOfMaxValueScore = maxValueAtCorner(grid) * 10
     weightedTilesScore = weightedTilesHeuristic(grid)
 
     # Exemplary score, try to modify it along with constants above
     # Little change can make huge difference
-    return weightedTilesScore + smoothnessScore + emptyTilesScore
+    return weightedTilesScore + smoothnessScore + emptyTilesScore + maxValueScore + monotonicityScore + positionOfMaxValueScore
 
 
 
